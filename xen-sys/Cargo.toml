@@ -1,0 +1,49 @@
+[package]
+name = "libxen-sys"
+version = "0.0.1-rc.2"
+license = "MIT"
+authors = { workspace = true }
+edition = { workspace = true }
+publish = { workspace = true }
+rust-version = { workspace = true }
+
+homepage = { workspace = true }
+repository = { workspace = true }
+description = "Rust FFI bindings for Xen"
+keywords = [
+    "xen",
+    "xenctrl",
+    "xencontrol",
+]
+categories = ["external-ffi-bindings"]
+
+links = "xencontrol"
+build = "build.rs"
+
+[lib]
+name = "xen_sys"
+
+[dependencies]
+
+[build-dependencies]
+bindgen = "0.70.1"
+pkg-config = "0.3.30"
+
+[features]
+default = [
+    "xencontrol",
+    "xendevicemodel",
+    "xenevtchn",
+    "xenforeignmemory",
+    "xenstore",
+
+    "vm_event",
+]
+
+xencontrol = []
+xendevicemodel = []
+xenevtchn = []
+xenforeignmemory = []
+xenstore = []
+
+vm_event = []
