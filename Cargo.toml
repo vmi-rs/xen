@@ -29,7 +29,7 @@ debug = 1
 
 [package]
 name = "libxen"
-version = "0.1.0"
+version = "0.1.1"
 license = "MIT"
 authors = { workspace = true }
 edition = { workspace = true }
@@ -55,4 +55,4 @@ libc = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
 
-xen-sys = { path = "./crates/xen-sys", version = "0.1.0", package = "libxen-sys" }
+xen-sys = { path = "./crates/xen-sys", version = "0.1.1", package = "libxen-sys" }
