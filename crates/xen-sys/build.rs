@@ -7,7 +7,7 @@ fn main() {
     let mut args = Vec::new();
     let config = pkg_config::Config::new();
 
-    if env::var("DOCS_RS").is_ok() {
+    if env::var("DOCS_RS").is_ok() || env::var("XEN_SYS_USE_BINDINGS").is_ok() {
         let src = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
         let dst = PathBuf::from(env::var("OUT_DIR").unwrap());
 
