@@ -1,7 +1,8 @@
 mod view;
+use xen_sys::{xc_altp2m_set_domain_state, xc_altp2m_switch_to_view};
+
 pub use self::view::XenAltP2MView;
 use crate::{ctrl::XenInterface, xc_check_error, MemoryAccess, XenDomainId, XenError};
-
 pub struct XenAltP2M {
     interface: XenInterface,
     domain_id: XenDomainId,
@@ -9,8 +10,7 @@ pub struct XenAltP2M {
 
 impl XenAltP2M {
     pub(crate) fn new(interface: XenInterface, domain_id: XenDomainId) -> Result<Self, XenError> {
-        let rc =
-            unsafe { xen_sys::xc_altp2m_set_domain_state(interface.handle.0, domain_id.0, true) };
+        let rc = unsafe { xc_altp2m_set_domain_state(interface.handle.0, domain_id.0, true) };
         xc_check_error!(interface.handle.0, rc);
         Ok(Self {
             interface,
@@ -23,9 +23,7 @@ impl XenAltP2M {
     }
 
     pub fn reset_view(&self) -> Result<(), XenError> {
-        let rc = unsafe {
-            xen_sys::xc_altp2m_switch_to_view(self.interface.handle.0, self.domain_id.0, 0)
-        };
+        let rc = unsafe { xc_altp2m_switch_to_view(self.interface.handle.0, self.domain_id.0, 0) };
         xc_check_error!(self.interface.handle.0, rc);
         Ok(())
     }
@@ -36,7 +34,7 @@ impl Drop for XenAltP2M {
         tracing::trace!(?self.domain_id, "disabling altp2m");
         let _ = self.reset_view();
         unsafe {
-            xen_sys::xc_altp2m_set_domain_state(self.interface.handle.0, self.domain_id.0, false);
+            xc_altp2m_set_domain_state(self.interface.handle.0, self.domain_id.0, false);
         }
     }
 }
