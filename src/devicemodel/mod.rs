@@ -44,34 +44,37 @@ pub enum XenX86EventType {
     SoftwareException,
 }
 
+/// Exception vector.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[repr(u8)]
-pub enum XenX86ExceptionVector {
-    DivideError = 0,
-    DebugException = 1,
-    Nmi = 2,
-    Breakpoint = 3,
-    Overflow = 4,
-    BoundRange = 5,
-    InvalidOpcode = 6,
-    DeviceNotAvailable = 7,
-    DoubleFault = 8,
-    CoprocessorSegmentOverrun = 9,
-    InvalidTss = 10,
-    SegmentNotPresent = 11,
-    StackSegmentFault = 12,
-    GeneralProtectionFault = 13,
-    PageFault = 14,
-    PicSpuriousInterruptVector = 15,
-    MathsFault = 16,
-    AlignmentCheck = 17,
-    MachineCheck = 18,
-    SimdException = 19,
-    VirtualisationException = 20,
-    ControlFlowProtection = 21,
-    HypervisorInjection = 28,
-    VmmCommunication = 29,
-    SecurityException = 30,
+pub struct XenX86ExceptionVector(pub u8);
+
+#[allow(non_upper_case_globals)]
+impl XenX86ExceptionVector {
+    pub const DivideError: Self = Self(0);
+    pub const DebugException: Self = Self(1);
+    pub const Nmi: Self = Self(2);
+    pub const Breakpoint: Self = Self(3);
+    pub const Overflow: Self = Self(4);
+    pub const BoundRange: Self = Self(5);
+    pub const InvalidOpcode: Self = Self(6);
+    pub const DeviceNotAvailable: Self = Self(7);
+    pub const DoubleFault: Self = Self(8);
+    pub const CoprocessorSegmentOverrun: Self = Self(9);
+    pub const InvalidTss: Self = Self(10);
+    pub const SegmentNotPresent: Self = Self(11);
+    pub const StackSegmentFault: Self = Self(12);
+    pub const GeneralProtectionFault: Self = Self(13);
+    pub const PageFault: Self = Self(14);
+    pub const PicSpuriousInterruptVector: Self = Self(15);
+    pub const MathsFault: Self = Self(16);
+    pub const AlignmentCheck: Self = Self(17);
+    pub const MachineCheck: Self = Self(18);
+    pub const SimdException: Self = Self(19);
+    pub const VirtualisationException: Self = Self(20);
+    pub const ControlFlowProtection: Self = Self(21);
+    pub const HypervisorInjection: Self = Self(28);
+    pub const VmmCommunication: Self = Self(29);
+    pub const SecurityException: Self = Self(30);
 }
 
 #[derive(Debug, Clone)]
@@ -109,7 +112,7 @@ impl XenDeviceModel {
                 self.handle.0,
                 self.domain_id.0 as _,
                 vcpu.0 as _,
-                vector as _,
+                vector.0,
                 event_type as _,
                 error_code,
                 instruction_length,
