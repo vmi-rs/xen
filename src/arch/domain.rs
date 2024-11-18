@@ -1,9 +1,10 @@
 use xen_sys::{
-    hvm_hw_cpu, hvm_save_descriptor, xc_domain_hvm_getcontext, xc_domain_hvm_getcontext_partial,
-    xc_domain_hvm_setcontext, __HVM_SAVE_TYPE_CPU,
+    hvm_hw_cpu, hvm_hw_lapic, hvm_hw_lapic_regs, hvm_save_descriptor, xc_domain_hvm_getcontext,
+    xc_domain_hvm_getcontext_partial, xc_domain_hvm_setcontext, __HVM_SAVE_TYPE_CPU,
+    __HVM_SAVE_TYPE_LAPIC, __HVM_SAVE_TYPE_LAPIC_REGS,
 };
 
-use super::x86::{Amd64, Registers};
+use super::x86::{Amd64, LocalApic, LocalApicRegisters, Registers};
 use crate::{xc_check_error, VcpuId, XenDomain, XenError};
 
 impl XenDomain<Amd64> {
@@ -15,6 +16,40 @@ impl XenDomain<Amd64> {
                 self.interface.handle.0,
                 self.domain_id.0,
                 size_of_val(&__HVM_SAVE_TYPE_CPU::default().c) as u16,
+                vcpu.0,
+                &result as *const _ as *mut _,
+                size_of_val(&result) as u32,
+            )
+        };
+        xc_check_error!(self.interface.handle.0, rc);
+        Ok(result.into())
+    }
+
+    pub fn get_context_lapic(&self, vcpu: VcpuId) -> Result<LocalApic, XenError> {
+        let result = unsafe { std::mem::zeroed::<hvm_hw_lapic>() };
+
+        let rc = unsafe {
+            xc_domain_hvm_getcontext_partial(
+                self.interface.handle.0,
+                self.domain_id.0,
+                size_of_val(&__HVM_SAVE_TYPE_LAPIC::default().c) as u16,
+                vcpu.0,
+                &result as *const _ as *mut _,
+                size_of_val(&result) as u32,
+            )
+        };
+        xc_check_error!(self.interface.handle.0, rc);
+        Ok(result.into())
+    }
+
+    pub fn get_context_lapic_regs(&self, vcpu: VcpuId) -> Result<LocalApicRegisters, XenError> {
+        let result = unsafe { std::mem::zeroed::<hvm_hw_lapic_regs>() };
+
+        let rc = unsafe {
+            xc_domain_hvm_getcontext_partial(
+                self.interface.handle.0,
+                self.domain_id.0,
+                size_of_val(&__HVM_SAVE_TYPE_LAPIC_REGS::default().c) as u16,
                 vcpu.0,
                 &result as *const _ as *mut _,
                 size_of_val(&result) as u32,

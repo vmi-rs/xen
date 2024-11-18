@@ -1,4 +1,4 @@
-use xen_sys::hvm_hw_cpu;
+use xen_sys::{hvm_hw_cpu, hvm_hw_lapic, hvm_hw_lapic_regs};
 
 pub struct Amd64;
 
@@ -301,5 +301,41 @@ impl From<hvm_hw_cpu> for Registers {
             msr_efer: value.msr_efer,
             msr_tsc_aux: value.msr_tsc_aux,
         }
+    }
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+pub struct LocalApic {
+    pub apic_base_msr: u64,
+    pub disabled: u32,
+    pub timer_divisor: u32,
+    pub tdt_msr: u64,
+}
+
+impl From<hvm_hw_lapic> for LocalApic {
+    fn from(value: hvm_hw_lapic) -> Self {
+        Self {
+            apic_base_msr: value.apic_base_msr,
+            disabled: value.disabled,
+            timer_divisor: value.timer_divisor,
+            tdt_msr: value.tdt_msr,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct LocalApicRegisters {
+    pub data: [u8; 1024],
+}
+
+impl Default for LocalApicRegisters {
+    fn default() -> Self {
+        Self { data: [0; 1024] }
+    }
+}
+
+impl From<hvm_hw_lapic_regs> for LocalApicRegisters {
+    fn from(value: hvm_hw_lapic_regs) -> Self {
+        Self { data: value.data }
     }
 }
