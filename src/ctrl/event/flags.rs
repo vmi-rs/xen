@@ -8,7 +8,7 @@ use xen_sys::{
 };
 
 bitflags::bitflags! {
-    #[derive(Debug)]
+    #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct VmEventFlag: u32 {
         // VCPU_PAUSED in a request signals that the vCPU triggering the event has been paused
         // VCPU_PAUSED in a response signals to unpause the vCPU
