@@ -12,12 +12,12 @@ pub enum XenError {
 
 #[derive(Debug)]
 pub struct XcError {
-    #[expect(dead_code)]
+    #[expect(unused)]
     pub(crate) rc: i32,
-    #[expect(dead_code)]
+    #[expect(unused)]
     pub(crate) code: u32,
     pub(crate) desc: &'static str,
-    #[expect(dead_code)]
+    #[expect(unused)]
     pub(crate) backtrace: std::backtrace::Backtrace,
 }
 
