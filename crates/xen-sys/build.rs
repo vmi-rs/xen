@@ -7,12 +7,15 @@ fn main() {
     let mut args = Vec::new();
     let config = pkg_config::Config::new();
 
-    if env::var("DOCS_RS").is_ok() || env::var("XEN_SYS_USE_BINDINGS").is_ok() {
+    if env::var("DOCS_RS").is_ok()
+        || env::var("XEN_SYS_USE_BINDINGS").is_ok()
+       // || cfg!(feature = "bindings-4_20")
+    {
         let src = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
         let dst = PathBuf::from(env::var("OUT_DIR").unwrap());
 
-        fs::copy(src.join(".docs-rs/bindings.rs"), dst.join("bindings.rs"))
-            .expect("Failed to copy bindings.rs from .docs-rs directory");
+        fs::copy(src.join("bindings/xen-4.20.rs"), dst.join("bindings.rs"))
+            .expect("Failed to copy bindings.rs");
 
         return;
     }

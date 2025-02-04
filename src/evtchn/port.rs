@@ -19,7 +19,6 @@ macro_rules! xc_check_error {
 #[derive(Debug, Clone)]
 pub struct XenEventChannelPort {
     evtchn: XenEventChannel,
-    #[allow(dead_code)]
     remote_port: u32,
     local_port: u32,
 }

@@ -20,6 +20,8 @@ libc = "0.2"
 thiserror = "2.0"
 tracing = "0.1"
 
+xen-sys = { path = "./crates/xen-sys", version = "0.2.0", package = "libxen-sys" }
+
 [profile.release]
 debug = 1
 
@@ -29,7 +31,7 @@ debug = 1
 
 [package]
 name = "libxen"
-version = "0.1.2"
+version = "0.2.0"
 license = "MIT"
 authors = { workspace = true }
 edition = { workspace = true }
@@ -55,4 +57,9 @@ libc = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
 
-xen-sys = { path = "./crates/xen-sys", version = "0.1.1", package = "libxen-sys" }
+xen-sys = { workspace = true }
+
+[features]
+default = []
+
+bindings-4_20 = ["xen-sys/bindings-4_20"]

@@ -9,6 +9,8 @@ pub mod foreignmemory;
 pub mod macros;
 pub mod store;
 
+pub use xen_sys as sys;
+
 pub use self::{
     arch::Architecture,
     core::{MemoryAccess, VcpuId, XenDomainId},

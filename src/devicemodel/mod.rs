@@ -48,7 +48,7 @@ pub enum XenX86EventType {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct XenX86ExceptionVector(pub u8);
 
-#[allow(non_upper_case_globals)]
+#[expect(non_upper_case_globals)]
 impl XenX86ExceptionVector {
     pub const DivideError: Self = Self(0);
     pub const DebugException: Self = Self(1);
