@@ -26,3 +26,22 @@ bitflags::bitflags! {
         const DEFAULT   = xenmem_access_t_XENMEM_access_default as u8;
     }
 }
+
+impl std::fmt::Display for MemoryAccess {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let mut result = [b'-'; 3];
+
+        if self.contains(MemoryAccess::R) {
+            result[0] = b'r';
+        }
+        if self.contains(MemoryAccess::W) {
+            result[1] = b'w';
+        }
+        if self.contains(MemoryAccess::X) {
+            result[2] = b'x';
+        }
+
+        // SAFETY: The `result` array is always valid UTF-8.
+        f.write_str(unsafe { std::str::from_utf8_unchecked(&result) })
+    }
+}

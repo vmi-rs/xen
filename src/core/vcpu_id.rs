@@ -12,3 +12,9 @@ impl From<VcpuId> for u16 {
         value.0
     }
 }
+
+impl std::fmt::Display for VcpuId {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}

@@ -12,3 +12,9 @@ impl From<XenDomainId> for u32 {
         value.0
     }
 }
+
+impl std::fmt::Display for XenDomainId {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
