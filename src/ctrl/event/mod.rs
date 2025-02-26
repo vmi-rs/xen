@@ -1,23 +1,10 @@
 pub mod arch;
-pub use self::arch::x86::VmEventRegsX86;
-
 mod data;
-pub use self::data::{VmEventData, VmEventEmulInsnData, VmEventEmulReadData};
-
 mod flags;
-pub use self::flags::VmEventFlag;
-
 mod reason;
-pub use self::reason::{
-    VmEventCpuid, VmEventCtrlReg, VmEventDebug, VmEventDescriptorAccess, VmEventFastSinglestep,
-    VmEventInterrupt, VmEventIo, VmEventMemAccess, VmEventMovToMsr, VmEventPaging, VmEventReason,
-    VmEventSharing, VmEventSinglestep, VmEventVmExit, VmEventWriteCtrlReg,
-};
-
 mod regs;
-pub use self::regs::VmEventRegs;
-
 mod selector;
+
 use xen_sys::{
     vm_event_st, VM_EVENT_INTERFACE_VERSION, VM_EVENT_REASON_CPUID,
     VM_EVENT_REASON_DEBUG_EXCEPTION, VM_EVENT_REASON_DESCRIPTOR_ACCESS,
@@ -28,7 +15,18 @@ use xen_sys::{
     VM_EVENT_REASON_VMEXIT, VM_EVENT_REASON_WRITE_CTRLREG,
 };
 
-pub use self::selector::VmEventSelectorReg;
+pub use self::{
+    arch::x86::VmEventRegsX86,
+    data::{VmEventData, VmEventEmulInsnData, VmEventEmulReadData},
+    flags::VmEventFlag,
+    reason::{
+        VmEventCpuid, VmEventCtrlReg, VmEventDebug, VmEventDescriptorAccess, VmEventFastSinglestep,
+        VmEventInterrupt, VmEventIo, VmEventMemAccess, VmEventMovToMsr, VmEventPaging,
+        VmEventReason, VmEventSharing, VmEventSinglestep, VmEventVmExit, VmEventWriteCtrlReg,
+    },
+    regs::VmEventRegs,
+    selector::VmEventSelectorReg,
+};
 use crate::VcpuId;
 
 #[derive(Debug, Default)]
@@ -87,16 +85,16 @@ impl From<vm_event_st> for VmEvent {
         };
 
         let data = unsafe {
-            if flags.intersects(VmEventFlag::SET_EMUL_READ_DATA) {
+            if flags.contains(VmEventFlag::SET_EMUL_READ_DATA) {
                 Some(VmEventData::EmulReadData(value.data.emul.read.into()))
             }
-            else if flags.intersects(VmEventFlag::SET_EMUL_INSN_DATA) {
+            else if flags.contains(VmEventFlag::SET_EMUL_INSN_DATA) {
                 Some(VmEventData::EmulInstructionData(
                     value.data.emul.insn.into(),
                 ))
             }
             else
-            /* if flags.intersects(VmEventFlag::SetRegisters) */
+            /* if flags.contains(VmEventFlag::SET_REGISTERS) */
             {
                 Some(VmEventData::Registers(value.data.regs.x86.into()))
             }
@@ -195,7 +193,7 @@ impl From<VmEvent> for vm_event_st {
             Some(VmEventFlagOptions {
                 fast_singlestep: Some(fast_singlestep),
             }) => {
-                if value.flags.intersects(VmEventFlag::FAST_SINGLESTEP) {
+                if value.flags.contains(VmEventFlag::FAST_SINGLESTEP) {
                     result.u.fast_singlestep = fast_singlestep.into();
                 }
                 else {
