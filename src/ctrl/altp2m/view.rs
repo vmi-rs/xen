@@ -3,7 +3,7 @@ use xen_sys::{
     xc_altp2m_set_mem_access, xc_altp2m_set_mem_access_multi, xc_altp2m_switch_to_view,
 };
 
-use crate::{ctrl::XenInterface, xc_check_error, MemoryAccess, XenDomainId, XenError};
+use crate::{MemoryAccess, XenDomainId, XenError, ctrl::XenInterface, xc_check_error};
 
 pub struct XenAltP2MView {
     interface: XenInterface,

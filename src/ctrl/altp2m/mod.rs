@@ -2,7 +2,7 @@ mod view;
 use xen_sys::{xc_altp2m_set_domain_state, xc_altp2m_switch_to_view};
 
 pub use self::view::XenAltP2MView;
-use crate::{ctrl::XenInterface, xc_check_error, MemoryAccess, XenDomainId, XenError};
+use crate::{MemoryAccess, XenDomainId, XenError, ctrl::XenInterface, xc_check_error};
 pub struct XenAltP2M {
     interface: XenInterface,
     domain_id: XenDomainId,

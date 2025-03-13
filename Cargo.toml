@@ -6,10 +6,10 @@ resolver = "2"
 
 [workspace.package]
 authors = ["Petr Benes <w.benny@outlook.com>"]
-edition = "2021"
+edition = "2024"
 license = "MIT"
 publish = true
-rust-version = "1.81.0"
+rust-version = "1.85.0"
 
 homepage = "https://github.com/vmi-rs/xen"
 repository = "https://github.com/vmi-rs/xen"
@@ -20,7 +20,7 @@ libc = "0.2"
 thiserror = "2.0"
 tracing = "0.1"
 
-xen-sys = { path = "./crates/xen-sys", version = "0.2.0", package = "libxen-sys" }
+xen-sys = { path = "./crates/xen-sys", version = "0.3.0", package = "libxen-sys" }
 
 [profile.release]
 debug = 1
@@ -31,7 +31,7 @@ debug = 1
 
 [package]
 name = "libxen"
-version = "0.2.0"
+version = "0.3.0"
 license = "MIT"
 authors = { workspace = true }
 edition = { workspace = true }

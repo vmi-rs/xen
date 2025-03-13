@@ -6,7 +6,7 @@ use std::{
 use xen_sys::{xenforeignmemory_map, xenforeignmemory_unmap};
 
 use super::{XenForeignMemory, XenForeignMemoryProtection};
-use crate::{consts::PAGE_SIZE, XenDomainId, XenError};
+use crate::{XenDomainId, XenError, consts::PAGE_SIZE};
 
 pub struct XenForeignMemoryMapped {
     foreignmemory: XenForeignMemory,

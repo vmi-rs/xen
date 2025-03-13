@@ -1,11 +1,11 @@
 use xen_sys::{
-    hvm_hw_cpu, hvm_hw_lapic, hvm_hw_lapic_regs, hvm_save_descriptor, xc_domain_hvm_getcontext,
-    xc_domain_hvm_getcontext_partial, xc_domain_hvm_setcontext, __HVM_SAVE_TYPE_CPU,
-    __HVM_SAVE_TYPE_LAPIC, __HVM_SAVE_TYPE_LAPIC_REGS,
+    __HVM_SAVE_TYPE_CPU, __HVM_SAVE_TYPE_LAPIC, __HVM_SAVE_TYPE_LAPIC_REGS, hvm_hw_cpu,
+    hvm_hw_lapic, hvm_hw_lapic_regs, hvm_save_descriptor, xc_domain_hvm_getcontext,
+    xc_domain_hvm_getcontext_partial, xc_domain_hvm_setcontext,
 };
 
 use super::x86::{Amd64, LocalApic, LocalApicRegisters, Registers};
-use crate::{xc_check_error, VcpuId, XenDomain, XenError};
+use crate::{VcpuId, XenDomain, XenError, xc_check_error};
 
 impl XenDomain<Amd64> {
     pub fn get_context_cpu(&self, vcpu: VcpuId) -> Result<Registers, XenError> {

@@ -9,8 +9,8 @@ use xen_sys::{
 
 pub use self::info::XenDomainInfo;
 use crate::{
-    ctrl::VmEventRing, xc_check_error, Architecture, MemoryAccess, VcpuId, XenAltP2M,
-    XenDeviceModel, XenDomainId, XenError, XenInterface, XenMonitor,
+    Architecture, MemoryAccess, VcpuId, XenAltP2M, XenDeviceModel, XenDomainId, XenError,
+    XenInterface, XenMonitor, ctrl::VmEventRing, xc_check_error,
 };
 
 pub struct XenDomain<Arch>

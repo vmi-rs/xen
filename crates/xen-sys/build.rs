@@ -7,9 +7,8 @@ fn main() {
     let mut args = Vec::new();
     let config = pkg_config::Config::new();
 
-    if env::var("DOCS_RS").is_ok()
-        || env::var("XEN_SYS_USE_BINDINGS").is_ok()
-       // || cfg!(feature = "bindings-4_20")
+    if env::var("DOCS_RS").is_ok() || env::var("XEN_SYS_USE_BINDINGS").is_ok()
+    // || cfg!(feature = "bindings-4_20")
     {
         let src = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
         let dst = PathBuf::from(env::var("OUT_DIR").unwrap());
@@ -65,6 +64,10 @@ fn main() {
         .derive_debug(true)
         .derive_default(true)
         .generate_cstr(true)
+        // wrap_unsafe_ops might be enabled by default in the future
+        // when the target edition is set to 2024
+        // https://github.com/rust-lang/rust-bindgen/issues/3147
+        .wrap_unsafe_ops(true)
         .generate()
         .expect("Unable to generate bindings");
 

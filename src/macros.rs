@@ -142,12 +142,7 @@ macro_rules! RING_HAS_UNCONSUMED_REQUESTS {
         let r = $r;
         let req = unsafe { (*(r.sring)).req_prod - r.req_cons };
         let rsp = $crate::RING_SIZE!(r) - (r.req_cons - r.rsp_prod_pvt);
-        if req < rsp {
-            req
-        }
-        else {
-            rsp
-        }
+        if req < rsp { req } else { rsp }
     }};
 }
 

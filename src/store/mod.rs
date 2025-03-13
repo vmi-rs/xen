@@ -1,10 +1,10 @@
 mod handle;
 use std::{
-    ffi::{c_char, c_void, CStr, CString},
+    ffi::{CStr, CString, c_char, c_void},
     rc::Rc,
 };
 
-use xen_sys::{xs_directory, xs_read, XBT_NULL};
+use xen_sys::{XBT_NULL, xs_directory, xs_read};
 
 pub use self::handle::XenStoreHandle;
 use crate::{XenDomainId, XenError};

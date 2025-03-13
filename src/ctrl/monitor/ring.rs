@@ -3,8 +3,8 @@ use std::ffi::c_void;
 use xen_sys::vm_event_back_ring;
 
 use crate::{
-    consts::PAGE_SIZE, ctrl::VmEvent, RING_GET_REQUEST, RING_HAS_UNCONSUMED_REQUESTS,
-    RING_PUSH_RESPONSES, RING_PUT_RESPONSE,
+    RING_GET_REQUEST, RING_HAS_UNCONSUMED_REQUESTS, RING_PUSH_RESPONSES, RING_PUT_RESPONSE,
+    consts::PAGE_SIZE, ctrl::VmEvent,
 };
 
 pub struct VmEventRing {

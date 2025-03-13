@@ -1,8 +1,8 @@
 use xen_sys::{
-    vm_event_cpuid, vm_event_debug, vm_event_desc_access, vm_event_fast_singlestep,
-    vm_event_interrupt_x86, vm_event_io, vm_event_mem_access, vm_event_mov_to_msr, vm_event_paging,
-    vm_event_sharing, vm_event_singlestep, vm_event_vmexit, vm_event_write_ctrlreg,
-    VM_EVENT_X86_CR0, VM_EVENT_X86_CR3, VM_EVENT_X86_CR4, VM_EVENT_X86_XCR0,
+    VM_EVENT_X86_CR0, VM_EVENT_X86_CR3, VM_EVENT_X86_CR4, VM_EVENT_X86_XCR0, vm_event_cpuid,
+    vm_event_debug, vm_event_desc_access, vm_event_fast_singlestep, vm_event_interrupt_x86,
+    vm_event_io, vm_event_mem_access, vm_event_mov_to_msr, vm_event_paging, vm_event_sharing,
+    vm_event_singlestep, vm_event_vmexit, vm_event_write_ctrlreg,
 };
 
 use crate::XenX86EventType;

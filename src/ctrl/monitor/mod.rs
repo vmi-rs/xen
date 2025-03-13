@@ -10,11 +10,12 @@ use xen_sys::{
 
 pub use self::ring::VmEventRing;
 use crate::{
+    BACK_RING_INIT, SHARED_RING_INIT, XenDomainId,
     consts::PAGE_SIZE,
     ctrl::{VmEventCtrlReg, XenInterface},
     error::{XcError, XenError},
     evtchn::XenEventChannelPort,
-    xc_check_error, XenDomainId, BACK_RING_INIT, SHARED_RING_INIT,
+    xc_check_error,
 };
 
 pub struct XenMonitor {
