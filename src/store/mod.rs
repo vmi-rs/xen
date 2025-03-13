@@ -21,11 +21,9 @@ impl XenStore {
         })
     }
 
-    pub fn domain_id_from_name(name: &str) -> Result<Option<XenDomainId>, XenError> {
-        let xs = Self::new()?;
-
-        for domain in xs.directory("/local/domain")? {
-            let domain_name = xs.read(&format!("/local/domain/{domain}/name"))?;
+    pub fn domain_id_from_name(&self, name: &str) -> Result<Option<XenDomainId>, XenError> {
+        for domain in self.directory("/local/domain")? {
+            let domain_name = self.read(&format!("/local/domain/{domain}/name"))?;
             if domain_name == name {
                 match domain.parse() {
                     Ok(domain) => return Ok(Some(XenDomainId(domain))),
