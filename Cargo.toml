@@ -5,6 +5,8 @@ members = [
 resolver = "2"
 
 [workspace.package]
+version = "0.4.0"
+
 authors = ["Petr Benes <w.benny@outlook.com>"]
 edition = "2024"
 license = "MIT"
@@ -20,7 +22,7 @@ libc = "0.2"
 thiserror = "2.0"
 tracing = "0.1"
 
-xen-sys = { path = "./crates/xen-sys", version = "0.3.0", package = "libxen-sys" }
+xen-sys = { path = "./crates/xen-sys", version = "0.4.0", package = "libxen-sys" }
 
 [profile.release]
 debug = 1
@@ -31,8 +33,8 @@ debug = 1
 
 [package]
 name = "libxen"
-version = "0.3.0"
-license = "MIT"
+version = { workspace = true }
+license = { workspace = true }
 authors = { workspace = true }
 edition = { workspace = true }
 publish = { workspace = true }
