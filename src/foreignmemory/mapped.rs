@@ -38,7 +38,7 @@ impl XenForeignMemoryMapped {
         };
 
         if ptr.is_null() {
-            return Err(XenError::Other("Failed to map foreign memory"));
+            return Err(XenError::Io(std::io::Error::last_os_error()));
         }
 
         Ok(Self {
