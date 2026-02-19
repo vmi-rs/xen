@@ -26,8 +26,8 @@ name = "xen_sys"
 [dependencies]
 
 [build-dependencies]
-bindgen = "0.72.0"
-pkg-config = "0.3.31"
+bindgen = "0.72.1"
+pkg-config = "0.3.32"
 
 [features]
 default = [
