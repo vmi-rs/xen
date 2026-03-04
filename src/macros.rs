@@ -1,3 +1,23 @@
+#[inline(always)]
+pub fn wmb() {
+    #[cfg(target_arch = "x86_64")]
+    unsafe {
+        core::arch::x86_64::_mm_sfence();
+    }
+
+    #[cfg(target_arch = "x86")]
+    unsafe {
+        core::arch::x86::_mm_sfence();
+    }
+
+    #[cfg(not(any(target_arch = "x86_64", target_arch = "x86")))]
+    {
+        core::sync::atomic::fence(core::sync::atomic::Ordering::Release);
+    }
+
+    core::sync::atomic::compiler_fence(core::sync::atomic::Ordering::Release);
+}
+
 #[macro_export]
 macro_rules! xc_check_error {
     ($handle:expr, $rc:expr) => {
@@ -178,7 +198,8 @@ macro_rules! RING_PUSH_RESPONSES {
         let name1 = $name1;
 
         unsafe {
-            (*(name1.sring)).rsp_prod = name1.rsp_prod_pvt;
+            $crate::macros::wmb();
+            ::std::ptr::write_volatile(&mut (*(name1.sring)).rsp_prod, name1.rsp_prod_pvt);
         }
     }};
 }
