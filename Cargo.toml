@@ -64,3 +64,4 @@ xen-sys = { workspace = true }
 default = []
 
 bindings-4_20 = ["xen-sys/bindings-4_20"]
+bindings-4_21 = ["xen-sys/bindings-4_21"]
