@@ -102,7 +102,7 @@ dependencies = [
 
 [[package]]
 name = "libxen"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "bitflags",
  "libc",
@@ -113,7 +113,7 @@ dependencies = [
 
 [[package]]
 name = "libxen-sys"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "bindgen",
  "pkg-config",

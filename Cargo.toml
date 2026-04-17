@@ -4,7 +4,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.4.0"
+version = "0.5.0"
 
 authors = ["Petr Benes <w.benny@outlook.com>"]
 edition = "2024"
@@ -21,7 +21,7 @@ libc = "0.2"
 thiserror = "2.0"
 tracing = "0.1"
 
-xen-sys = { path = "./crates/xen-sys", version = "0.4.0", package = "libxen-sys" }
+xen-sys = { path = "./crates/xen-sys", version = "0.5.0", package = "libxen-sys" }
 
 [profile.release]
 debug = 1
