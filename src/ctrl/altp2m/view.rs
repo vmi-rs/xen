@@ -63,7 +63,13 @@ impl XenAltP2MView {
                 &mut access,
             )
         };
-        xc_check_error!(self.interface.handle.0, rc);
+
+        // Preserve errno so callers can distinguish a lazy, unmaterialized
+        // altp2m entry (ESRCH) from other failures.
+        if rc < 0 {
+            return Err(XenError::Io(std::io::Error::last_os_error()));
+        }
+
         Ok(MemoryAccess::from_bits_truncate(access as _))
     }
 
