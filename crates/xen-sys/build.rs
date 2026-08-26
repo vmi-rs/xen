@@ -1,19 +1,25 @@
-use std::{env, fs, path::PathBuf};
+use std::path::PathBuf;
 
 fn main() {
-    let out_path =
-        PathBuf::from(env::var("OUT_DIR").expect("Unable to get OUT_DIR environment variable"));
+    let out_path = PathBuf::from(
+        std::env::var("OUT_DIR").expect("Unable to get OUT_DIR environment variable"),
+    );
 
     let mut args = Vec::new();
     let config = pkg_config::Config::new();
 
-    if env::var("DOCS_RS").is_ok() || env::var("XEN_SYS_USE_BINDINGS").is_ok()
-    // || cfg!(feature = "bindings-4_21")
-    {
-        let src = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-        let dst = PathBuf::from(env::var("OUT_DIR").unwrap());
+    if std::env::var("DOCS_RS").is_ok() || std::env::var("XEN_SYS_USE_BINDINGS").is_ok() {
+        let src = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap());
+        let dst = PathBuf::from(std::env::var("OUT_DIR").unwrap());
 
-        fs::copy(src.join("bindings/xen-4.21.rs"), dst.join("bindings.rs"))
+        let bindings = cfg_select! {
+            feature = "bindings-4_20" => "bindings/xen-4.20.rs",
+            feature = "bindings-4_21" => "bindings/xen-4.21.rs",
+            feature = "bindings-4_22" => "bindings/xen-4.22.rs",
+            _ => "bindings/xen-4.22.rs",
+        };
+
+        std::fs::copy(src.join(bindings), dst.join("bindings.rs"))
             .expect("Failed to copy bindings.rs");
 
         return;

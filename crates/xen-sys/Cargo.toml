@@ -38,7 +38,7 @@ default = [
     "xenstore",
     "vm_event",
 
-    "bindings-4_21",
+    "bindings-4_22",
 ]
 
 xencontrol = []
@@ -50,3 +50,4 @@ vm_event = []
 
 bindings-4_20 = []
 bindings-4_21 = []
+bindings-4_22 = []

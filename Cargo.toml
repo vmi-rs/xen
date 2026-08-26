@@ -10,7 +10,7 @@ authors = ["Petr Benes <w.benny@outlook.com>"]
 edition = "2024"
 license = "MIT"
 publish = true
-rust-version = "1.88.0"
+rust-version = "1.95.0"
 
 homepage = "https://github.com/vmi-rs/xen"
 repository = "https://github.com/vmi-rs/xen"
@@ -65,3 +65,4 @@ default = []
 
 bindings-4_20 = ["xen-sys/bindings-4_20"]
 bindings-4_21 = ["xen-sys/bindings-4_21"]
+bindings-4_22 = ["xen-sys/bindings-4_22"]
