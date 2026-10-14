@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** libxen-sys generates its bindings with bindgen 0.73.2 instead
+  of 0.72.1. A struct with bitfields names its alignment field
+  `_bindgen_align` instead of `_bitfield_align_1`, and opaque handle types
+  such as `xc_interface_core` no longer derive `Copy` and `Clone`. The
+  bindings shipped for docs.rs and `XEN_SYS_USE_BINDINGS` are unchanged.
+- A lock file that already holds prettyplease 0.2 and syn 3 can make bindgen
+  0.73.2 fail to compile, with `ParseQuote` not implemented for `syn::File`
+  (rust-bindgen#3448). `cargo update -p prettyplease` fixes the lock file.
+
 ### Added
 
 - `XenControl::evtchn_status` returns the status of a domain's event channel
