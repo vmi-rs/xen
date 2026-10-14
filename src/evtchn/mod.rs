@@ -1,4 +1,5 @@
 mod port;
+mod status;
 use std::{
     os::fd::{AsFd, AsRawFd, BorrowedFd, RawFd},
     rc::Rc,
@@ -6,7 +7,10 @@ use std::{
 
 use xen_sys::{xenevtchn_close, xenevtchn_fd, xenevtchn_handle, xenevtchn_open, xentoollog_logger};
 
-pub use self::port::XenEventChannelPort;
+pub use self::{
+    port::XenEventChannelPort,
+    status::{XenEventChannelState, XenEventChannelStatus},
+};
 use crate::XenError;
 
 #[derive(Debug, Clone)]

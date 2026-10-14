@@ -19,7 +19,7 @@ pub use self::{
     },
     devicemodel::{XenDeviceModel, XenX86EventType, XenX86ExceptionVector},
     error::XenError,
-    evtchn::XenEventChannelPort,
+    evtchn::{XenEventChannelPort, XenEventChannelState, XenEventChannelStatus},
     foreignmemory::{XenForeignMemory, XenForeignMemoryMapped, XenForeignMemoryProtection},
     store::XenStore,
 };
