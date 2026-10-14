@@ -19,8 +19,8 @@ impl From<vm_event_x86_selector_reg> for VmEventSelectorReg {
 impl From<VmEventSelectorReg> for vm_event_x86_selector_reg {
     fn from(value: VmEventSelectorReg) -> Self {
         Self {
-            _bitfield_align_1: Default::default(),
             _bitfield_1: Self::new_bitfield_1(value.limit, value.ar),
+            ..Default::default()
         }
     }
 }
