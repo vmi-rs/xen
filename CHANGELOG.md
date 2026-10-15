@@ -26,6 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XenDomainId::SELF` stands for the calling domain, `DOMID_SELF` in Xen's
   headers.
 
+### Fixed
+
+- libxen-sys reruns its build script when a Xen header, `wrapper.h` or the
+  selected shipped bindings change, and when `DOCS_RS` or
+  `XEN_SYS_USE_BINDINGS` changes. Before, a Xen upgrade or a change of either
+  variable kept the old bindings.
+
 ## [0.6.0] - 2026-08-27
 
 This is the last release before this changelog. The git history lists its

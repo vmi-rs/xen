@@ -5,6 +5,11 @@ fn main() {
         std::env::var("OUT_DIR").expect("Unable to get OUT_DIR environment variable"),
     );
 
+    // Cargo reruns this script only when a reported input changes. Each of
+    // these two variables selects the bindings shipped in `bindings/`.
+    println!("cargo:rerun-if-env-changed=DOCS_RS");
+    println!("cargo:rerun-if-env-changed=XEN_SYS_USE_BINDINGS");
+
     let mut args = Vec::new();
     let config = pkg_config::Config::new();
 
@@ -19,6 +24,7 @@ fn main() {
             _ => "bindings/xen-4.22.rs",
         };
 
+        println!("cargo:rerun-if-changed={bindings}");
         std::fs::copy(src.join(bindings), dst.join("bindings.rs"))
             .expect("Failed to copy bindings.rs");
 
@@ -67,6 +73,9 @@ fn main() {
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
         .clang_args(args)
+        // These callbacks make cargo rerun this script when a header changes.
+        // They also report the environment variables that bindgen reads.
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .derive_debug(true)
         .derive_default(true)
         .generate_cstr(true)
