@@ -160,7 +160,14 @@ macro_rules! RING_SIZE {
 macro_rules! RING_HAS_UNCONSUMED_REQUESTS {
     ($r:expr) => {{
         let r = $r;
-        let req = unsafe { (*(r.sring)).req_prod - r.req_cons };
+        // Xen writes `req_prod` while the ring is in use. An acquire load reads
+        // its current value, also in a loop that waits for a request, and keeps
+        // the reads of the requests after it.
+        let req_prod = unsafe {
+            ::std::sync::atomic::AtomicU32::from_ptr(&raw mut (*r.sring).req_prod)
+                .load(::std::sync::atomic::Ordering::Acquire)
+        };
+        let req = req_prod - r.req_cons;
         let rsp = $crate::RING_SIZE!(r) - (r.req_cons - r.rsp_prod_pvt);
         if req < rsp { req } else { rsp }
     }};

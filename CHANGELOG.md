@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `RING_HAS_UNCONSUMED_REQUESTS`, and with it
+  `VmEventRing::unconsumed_requests` and `has_unconsumed_requests`, read the
+  ring's `req_prod` with an acquire load. A loop that waits for a request
+  sees each new one, and the request is read after its index.
+
 ## [0.7.0] - 2026-10-15
 
 ### Changed
