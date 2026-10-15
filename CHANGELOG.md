@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+## [0.8.0] - 2026-10-15
+
+### Added
+
 - `XenEventChannelPort::pending` and `unmask` are public, so that a caller
   can keep the port masked after an event and unmask it later.
 
