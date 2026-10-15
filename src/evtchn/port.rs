@@ -61,7 +61,14 @@ impl XenEventChannelPort {
         Ok(())
     }
 
-    fn pending(&self) -> Result<u32, XenError> {
+    /// Returns the next port that the event channel device reports.
+    ///
+    /// The call blocks until a port is reported. The device masks a port when
+    /// it reports it. While the port is masked, Xen marks new events on it as
+    /// pending without interrupting the domain, until [`unmask`] is called.
+    ///
+    /// [`unmask`]: Self::unmask
+    pub fn pending(&self) -> Result<u32, XenError> {
         let rc = unsafe { xenevtchn_pending(*self.evtchn.0) };
         xc_check_error!(self, rc);
 
@@ -69,7 +76,11 @@ impl XenEventChannelPort {
         Ok(port)
     }
 
-    fn unmask(&self) -> Result<(), XenError> {
+    /// Unmasks the port, so that its next event interrupts the domain.
+    ///
+    /// An event that became pending while the port was masked interrupts the
+    /// domain at once.
+    pub fn unmask(&self) -> Result<(), XenError> {
         let rc = unsafe { xenevtchn_unmask(*self.evtchn.0, self.local_port) };
         xc_check_error!(self, rc);
         Ok(())
