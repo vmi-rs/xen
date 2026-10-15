@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `XenStore::domain_id_from_name` skips a domain that disappears while the
+  lookup runs. Before, if another program destroyed a domain at that moment,
+  the whole lookup failed with "Failed to read xen store".
+
 ## [0.8.0] - 2026-10-15
 
 ### Added
