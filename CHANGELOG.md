@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Added
+
+### Fixed
+
+## [0.7.0] - 2026-10-15
+
+### Changed
+
 - **Breaking:** libxen-sys generates its bindings with bindgen 0.73.2 instead
   of 0.72.1. A struct with bitfields names its alignment field
   `_bindgen_align` instead of `_bitfield_align_1`, and opaque handle types
