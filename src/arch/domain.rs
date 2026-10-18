@@ -1,6 +1,6 @@
 use xen_sys::{
-    __HVM_SAVE_TYPE_CPU, hvm_hw_cpu, hvm_hw_lapic, hvm_hw_lapic_regs, hvm_save_descriptor,
-    xc_domain_hvm_getcontext, xc_domain_hvm_getcontext_partial, xc_domain_hvm_setcontext,
+    hvm_hw_cpu, hvm_hw_lapic, hvm_hw_lapic_regs, xc_domain_hvm_getcontext,
+    xc_domain_hvm_getcontext_partial, xc_domain_hvm_setcontext,
 };
 
 use super::{
@@ -24,72 +24,12 @@ impl XenDomain<Amd64> {
 
     pub fn set_context_cpu(&self, vcpu: VcpuId, registers: Registers) -> Result<(), XenError> {
         self.pause()?;
+        let result = self.load_context_cpu(vcpu, registers);
 
-        // Get the context size.
-        let size = unsafe {
-            xc_domain_hvm_getcontext(
-                self.interface.handle.0,
-                self.domain_id.0,
-                std::ptr::null_mut(),
-                0,
-            )
-        };
-
-        if size <= 0 {
-            self.unpause()?;
-            return Err(XenError::Other("Failed to get context size"));
-        }
-
-        // Allocate a buffer to hold the context.
-        let mut buffer = vec![0u8; size as usize];
-
-        // Get the context.
-        let rc = unsafe {
-            xc_domain_hvm_getcontext(
-                self.interface.handle.0,
-                self.domain_id.0,
-                buffer.as_mut_ptr(),
-                size as u32,
-            )
-        };
-        xc_check_error!(self.interface.handle.0, rc);
-
-        // Locate the CPU context.
-        let mut offset: u32 = 0;
-        let size = size as u32;
-        let hvm_save_code_cpu = size_of_val(&__HVM_SAVE_TYPE_CPU::default().c) as u16;
-
-        unsafe {
-            while offset < size {
-                let descriptor =
-                    buffer.as_ptr().offset(offset as isize) as *const hvm_save_descriptor;
-
-                offset += size_of::<hvm_save_descriptor>() as u32;
-
-                if (*descriptor).typecode == hvm_save_code_cpu && (*descriptor).instance == vcpu.0 {
-                    let vcpu_context = buffer.as_ptr().offset(offset as isize) as *mut hvm_hw_cpu;
-                    registers.copy_into(&mut *vcpu_context);
-                    break;
-                }
-
-                offset += (*descriptor).length;
-            }
-        }
-
-        // Set the context.
-        let rc = unsafe {
-            xc_domain_hvm_setcontext(
-                self.interface.handle.0,
-                self.domain_id.0,
-                buffer.as_mut_ptr(),
-                size,
-            )
-        };
-        xc_check_error!(self.interface.handle.0, rc);
-
-        self.unpause()?;
-
-        Ok(())
+        // The domain must not stay paused when the load fails, so it is
+        // unpaused either way. If both fail, the load's error is returned,
+        // because it is the cause.
+        result.and(self.unpause())
     }
 
     /// Returns the domain's whole HVM context.
@@ -195,5 +135,31 @@ impl XenDomain<Amd64> {
         };
         xc_check_error!(self.interface.handle.0, rc);
         Ok(record)
+    }
+
+    /// Sets the registers of one vCPU.
+    ///
+    /// Xen loads registers only as part of a whole context, so this reads the
+    /// context, changes the vCPU's `hvm_hw_cpu` record and loads the context
+    /// back. Returns an error if the context has no record for `vcpu`. The
+    /// caller pauses the domain around it.
+    fn load_context_cpu(&self, vcpu: VcpuId, registers: Registers) -> Result<(), XenError> {
+        let mut context = self.get_context()?;
+
+        let mut found = false;
+        context.update(|instance, cpu: &mut hvm_hw_cpu| {
+            if instance == vcpu.0 {
+                registers.copy_into(cpu);
+                found = true;
+            }
+        });
+
+        if !found {
+            return Err(XenError::Other(
+                "Failed to find the CPU context of the vCPU",
+            ));
+        }
+
+        self.set_context(&context)
     }
 }

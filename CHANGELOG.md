@@ -38,6 +38,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XenDomain::get_context_cpu`, `get_context_lapic` and
   `get_context_lapic_regs` give Xen a mutable record to fill. Before, Xen
   wrote into an immutable binding, which is undefined behavior.
+- `XenDomain::set_context_cpu` unpauses the domain when reading or loading
+  the context fails, and returns an error for a vCPU that has no CPU record
+  in the context. Before, a failure left the domain paused, and an unknown
+  vCPU loaded the context unchanged. It finds the record with
+  `XenHvmContext`, which stops at the end record and checks that the record
+  lies within the context. Before, it wrote the registers without that check,
+  through a reference that could be unaligned.
 
 ## [0.8.0] - 2026-10-15
 
