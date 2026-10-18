@@ -17,7 +17,7 @@ pub use self::{
     ctrl::{
         XenAltP2M, XenAltP2MView, XenControl, XenDomain, XenDomainInfo, XenInterface, XenMonitor,
     },
-    devicemodel::{XenDeviceModel, XenX86EventType, XenX86ExceptionVector},
+    devicemodel::{XenDeviceModel, XenIoreqPage, XenX86EventType, XenX86ExceptionVector},
     error::XenError,
     evtchn::{XenEventChannelPort, XenEventChannelState, XenEventChannelStatus},
     foreignmemory::{

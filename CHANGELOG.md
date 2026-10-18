@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the calling process, such as the pages that Xen shares with an ioreq
   server. Xen calls such a group of pages a resource. The mapping is a
   `XenForeignMemoryResource`.
+- `XenIoreqPage` maps the page through which Xen passes a domain's device
+  accesses to its ioreq server, such as QEMU. `XenIoreqPage::pending` returns
+  `true` while a vCPU waits for such an access to finish.
 - libxen-sys binds `xen/hvm/ioreq.h`. The shipped 4.20 and 4.21 bindings
   come from their bindgen versions 0.71.1 and 0.72.1. They leave out
   `buf_ioreq` and `buffered_iopage`, because those versions get the layout of

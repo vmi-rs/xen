@@ -1,9 +1,10 @@
 mod handle;
+mod ioreq;
 use std::rc::Rc;
 
 use xen_sys::xendevicemodel_inject_event;
 
-pub use self::handle::XenDeviceModelHandle;
+pub use self::{handle::XenDeviceModelHandle, ioreq::XenIoreqPage};
 use crate::{VcpuId, XenDomainId, XenError};
 
 macro_rules! xc_check_error {
