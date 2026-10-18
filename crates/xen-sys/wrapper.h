@@ -4,6 +4,7 @@
 
 #if defined(BINDGEN_XENDEVICEMODEL)
 #   include <xendevicemodel.h>
+#   include <xen/hvm/ioreq.h>
 #endif
 
 #if defined(BINDGEN_XENEVTCHN)

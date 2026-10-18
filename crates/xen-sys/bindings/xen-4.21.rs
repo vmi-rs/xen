@@ -1932,6 +1932,33 @@ pub const E820_UNUSABLE: u32 = 5;
 pub const E820MAX: u32 = 128;
 pub const XC_MAX_ERROR_MSG_LEN: u32 = 1024;
 pub const XC_MSR_INPUT_UNUSED: u32 = 4294967295;
+pub const IOREQ_READ: u32 = 1;
+pub const IOREQ_WRITE: u32 = 0;
+pub const STATE_IOREQ_NONE: u32 = 0;
+pub const STATE_IOREQ_READY: u32 = 1;
+pub const STATE_IOREQ_INPROCESS: u32 = 2;
+pub const STATE_IORESP_READY: u32 = 3;
+pub const IOREQ_TYPE_PIO: u32 = 0;
+pub const IOREQ_TYPE_COPY: u32 = 1;
+pub const IOREQ_TYPE_PCI_CONFIG: u32 = 2;
+pub const IOREQ_TYPE_TIMEOFFSET: u32 = 7;
+pub const IOREQ_TYPE_INVALIDATE: u32 = 8;
+pub const IOREQ_BUFFER_SLOT_NUM: u32 = 511;
+pub const ACPI_PM1A_EVT_BLK_ADDRESS_V0: u32 = 8000;
+pub const ACPI_PM1A_CNT_BLK_ADDRESS_V0: u32 = 8004;
+pub const ACPI_PM_TMR_BLK_ADDRESS_V0: u32 = 8008;
+pub const ACPI_GPE0_BLK_ADDRESS_V0: u32 = 8040;
+pub const ACPI_GPE0_BLK_LEN_V0: u32 = 8;
+pub const ACPI_PM1A_EVT_BLK_ADDRESS_V1: u32 = 45056;
+pub const ACPI_PM1A_CNT_BLK_ADDRESS_V1: u32 = 45060;
+pub const ACPI_PM_TMR_BLK_ADDRESS_V1: u32 = 45064;
+pub const ACPI_GPE0_BLK_ADDRESS_V1: u32 = 45024;
+pub const ACPI_GPE0_BLK_LEN_V1: u32 = 4;
+pub const ACPI_PM1A_EVT_BLK_ADDRESS: u32 = 8000;
+pub const ACPI_PM1A_CNT_BLK_ADDRESS: u32 = 8004;
+pub const ACPI_PM_TMR_BLK_ADDRESS: u32 = 8008;
+pub const ACPI_GPE0_BLK_ADDRESS: u32 = 8040;
+pub const ACPI_GPE0_BLK_LEN: u32 = 8;
 pub const XENEVTCHN_NO_CLOEXEC: u32 = 1;
 pub const _LIBC_LIMITS_H_: u32 = 1;
 pub const MB_LEN_MAX: u32 = 16;
@@ -30535,6 +30562,243 @@ unsafe extern "C" {
         domid: domid_t,
     ) -> ::std::os::raw::c_int;
 }
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone)]
+pub struct ioreq {
+    pub addr: u64,
+    pub data: u64,
+    pub count: u32,
+    pub size: u32,
+    pub vp_eport: u32,
+    pub _pad0: u16,
+    pub _bitfield_align_1: [u8; 0],
+    pub _bitfield_1: __BindgenBitfieldUnit<[u8; 1usize]>,
+    pub type_: u8,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of ioreq"][::std::mem::size_of::<ioreq>() - 32usize];
+    ["Alignment of ioreq"][::std::mem::align_of::<ioreq>() - 8usize];
+    ["Offset of field: ioreq::addr"][::std::mem::offset_of!(ioreq, addr) - 0usize];
+    ["Offset of field: ioreq::data"][::std::mem::offset_of!(ioreq, data) - 8usize];
+    ["Offset of field: ioreq::count"][::std::mem::offset_of!(ioreq, count) - 16usize];
+    ["Offset of field: ioreq::size"][::std::mem::offset_of!(ioreq, size) - 20usize];
+    ["Offset of field: ioreq::vp_eport"][::std::mem::offset_of!(ioreq, vp_eport) - 24usize];
+    ["Offset of field: ioreq::_pad0"][::std::mem::offset_of!(ioreq, _pad0) - 28usize];
+    ["Offset of field: ioreq::type_"][::std::mem::offset_of!(ioreq, type_) - 31usize];
+};
+impl ioreq {
+    #[inline]
+    pub fn state(&self) -> u8 {
+        unsafe { ::std::mem::transmute(self._bitfield_1.get(0usize, 4u8) as u8) }
+    }
+    #[inline]
+    pub fn set_state(&mut self, val: u8) {
+        unsafe {
+            let val: u8 = ::std::mem::transmute(val);
+            self._bitfield_1.set(0usize, 4u8, val as u64)
+        }
+    }
+    #[inline]
+    pub unsafe fn state_raw(this: *const Self) -> u8 {
+        unsafe {
+            ::std::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::std::ptr::addr_of!((*this)._bitfield_1),
+                0usize,
+                4u8,
+            ) as u8)
+        }
+    }
+    #[inline]
+    pub unsafe fn set_state_raw(this: *mut Self, val: u8) {
+        unsafe {
+            let val: u8 = ::std::mem::transmute(val);
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
+                ::std::ptr::addr_of_mut!((*this)._bitfield_1),
+                0usize,
+                4u8,
+                val as u64,
+            )
+        }
+    }
+    #[inline]
+    pub fn data_is_ptr(&self) -> u8 {
+        unsafe { ::std::mem::transmute(self._bitfield_1.get(4usize, 1u8) as u8) }
+    }
+    #[inline]
+    pub fn set_data_is_ptr(&mut self, val: u8) {
+        unsafe {
+            let val: u8 = ::std::mem::transmute(val);
+            self._bitfield_1.set(4usize, 1u8, val as u64)
+        }
+    }
+    #[inline]
+    pub unsafe fn data_is_ptr_raw(this: *const Self) -> u8 {
+        unsafe {
+            ::std::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::std::ptr::addr_of!((*this)._bitfield_1),
+                4usize,
+                1u8,
+            ) as u8)
+        }
+    }
+    #[inline]
+    pub unsafe fn set_data_is_ptr_raw(this: *mut Self, val: u8) {
+        unsafe {
+            let val: u8 = ::std::mem::transmute(val);
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
+                ::std::ptr::addr_of_mut!((*this)._bitfield_1),
+                4usize,
+                1u8,
+                val as u64,
+            )
+        }
+    }
+    #[inline]
+    pub fn dir(&self) -> u8 {
+        unsafe { ::std::mem::transmute(self._bitfield_1.get(5usize, 1u8) as u8) }
+    }
+    #[inline]
+    pub fn set_dir(&mut self, val: u8) {
+        unsafe {
+            let val: u8 = ::std::mem::transmute(val);
+            self._bitfield_1.set(5usize, 1u8, val as u64)
+        }
+    }
+    #[inline]
+    pub unsafe fn dir_raw(this: *const Self) -> u8 {
+        unsafe {
+            ::std::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::std::ptr::addr_of!((*this)._bitfield_1),
+                5usize,
+                1u8,
+            ) as u8)
+        }
+    }
+    #[inline]
+    pub unsafe fn set_dir_raw(this: *mut Self, val: u8) {
+        unsafe {
+            let val: u8 = ::std::mem::transmute(val);
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
+                ::std::ptr::addr_of_mut!((*this)._bitfield_1),
+                5usize,
+                1u8,
+                val as u64,
+            )
+        }
+    }
+    #[inline]
+    pub fn df(&self) -> u8 {
+        unsafe { ::std::mem::transmute(self._bitfield_1.get(6usize, 1u8) as u8) }
+    }
+    #[inline]
+    pub fn set_df(&mut self, val: u8) {
+        unsafe {
+            let val: u8 = ::std::mem::transmute(val);
+            self._bitfield_1.set(6usize, 1u8, val as u64)
+        }
+    }
+    #[inline]
+    pub unsafe fn df_raw(this: *const Self) -> u8 {
+        unsafe {
+            ::std::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::std::ptr::addr_of!((*this)._bitfield_1),
+                6usize,
+                1u8,
+            ) as u8)
+        }
+    }
+    #[inline]
+    pub unsafe fn set_df_raw(this: *mut Self, val: u8) {
+        unsafe {
+            let val: u8 = ::std::mem::transmute(val);
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
+                ::std::ptr::addr_of_mut!((*this)._bitfield_1),
+                6usize,
+                1u8,
+                val as u64,
+            )
+        }
+    }
+    #[inline]
+    pub fn _pad1(&self) -> u8 {
+        unsafe { ::std::mem::transmute(self._bitfield_1.get(7usize, 1u8) as u8) }
+    }
+    #[inline]
+    pub fn set__pad1(&mut self, val: u8) {
+        unsafe {
+            let val: u8 = ::std::mem::transmute(val);
+            self._bitfield_1.set(7usize, 1u8, val as u64)
+        }
+    }
+    #[inline]
+    pub unsafe fn _pad1_raw(this: *const Self) -> u8 {
+        unsafe {
+            ::std::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::std::ptr::addr_of!((*this)._bitfield_1),
+                7usize,
+                1u8,
+            ) as u8)
+        }
+    }
+    #[inline]
+    pub unsafe fn set__pad1_raw(this: *mut Self, val: u8) {
+        unsafe {
+            let val: u8 = ::std::mem::transmute(val);
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
+                ::std::ptr::addr_of_mut!((*this)._bitfield_1),
+                7usize,
+                1u8,
+                val as u64,
+            )
+        }
+    }
+    #[inline]
+    pub fn new_bitfield_1(
+        state: u8,
+        data_is_ptr: u8,
+        dir: u8,
+        df: u8,
+        _pad1: u8,
+    ) -> __BindgenBitfieldUnit<[u8; 1usize]> {
+        let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 1usize]> = Default::default();
+        __bindgen_bitfield_unit.set(0usize, 4u8, {
+            let state: u8 = unsafe { ::std::mem::transmute(state) };
+            state as u64
+        });
+        __bindgen_bitfield_unit.set(4usize, 1u8, {
+            let data_is_ptr: u8 = unsafe { ::std::mem::transmute(data_is_ptr) };
+            data_is_ptr as u64
+        });
+        __bindgen_bitfield_unit.set(5usize, 1u8, {
+            let dir: u8 = unsafe { ::std::mem::transmute(dir) };
+            dir as u64
+        });
+        __bindgen_bitfield_unit.set(6usize, 1u8, {
+            let df: u8 = unsafe { ::std::mem::transmute(df) };
+            df as u64
+        });
+        __bindgen_bitfield_unit.set(7usize, 1u8, {
+            let _pad1: u8 = unsafe { ::std::mem::transmute(_pad1) };
+            _pad1 as u64
+        });
+        __bindgen_bitfield_unit
+    }
+}
+pub type ioreq_t = ioreq;
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone)]
+pub struct shared_iopage {
+    pub vcpu_ioreq: [ioreq; 1usize],
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of shared_iopage"][::std::mem::size_of::<shared_iopage>() - 32usize];
+    ["Alignment of shared_iopage"][::std::mem::align_of::<shared_iopage>() - 8usize];
+    ["Offset of field: shared_iopage::vcpu_ioreq"]
+        [::std::mem::offset_of!(shared_iopage, vcpu_ioreq) - 0usize];
+};
+pub type shared_iopage_t = shared_iopage;
 pub type xenevtchn_port_or_error_t = ::std::os::raw::c_int;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

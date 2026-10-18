@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- libxen-sys binds `xen/hvm/ioreq.h`. The shipped 4.20 and 4.21 bindings
+  come from their bindgen versions 0.71.1 and 0.72.1. They leave out
+  `buf_ioreq` and `buffered_iopage`, because those versions get the layout of
+  the two structs wrong.
+
 ### Fixed
 
 - `XenStore::domain_id_from_name` skips a domain that disappears while the
