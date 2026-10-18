@@ -12,7 +12,7 @@ pub mod store;
 pub use xen_sys as sys;
 
 pub use self::{
-    arch::Architecture,
+    arch::{Architecture, XenHvmContext, XenHvmSaveRecord},
     core::{MemoryAccess, VcpuId, XenDomainId},
     ctrl::{
         XenAltP2M, XenAltP2MView, XenControl, XenDomain, XenDomainInfo, XenInterface, XenMonitor,

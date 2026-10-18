@@ -4,7 +4,10 @@ use xen_sys::{
     xc_domain_hvm_getcontext_partial, xc_domain_hvm_setcontext,
 };
 
-use super::x86::{Amd64, LocalApic, LocalApicRegisters, Registers};
+use super::{
+    XenHvmContext,
+    x86::{Amd64, LocalApic, LocalApicRegisters, Registers},
+};
 use crate::{VcpuId, XenDomain, XenError, xc_check_error};
 
 impl XenDomain<Amd64> {
@@ -126,6 +129,82 @@ impl XenDomain<Amd64> {
 
         self.unpause()?;
 
+        Ok(())
+    }
+
+    /// Returns the domain's whole HVM context.
+    ///
+    /// The context holds the registers of every vCPU, the local APICs and the
+    /// timers, the same records that Xen uses to save and migrate a domain.
+    /// Change it with `XenHvmContext::update` and load it back with
+    /// `set_context`.
+    ///
+    /// # Notes
+    ///
+    /// Pause the domain before this call and unpause it after `set_context`.
+    /// Otherwise the guest keeps running, and loading the context undoes what
+    /// it did in between.
+    ///
+    /// Each call moves the guest's ACPI PM timer forward. When Xen saves the
+    /// timer, it adds the time since the timer's last update to the counter,
+    /// and the next update adds the same time again.
+    pub fn get_context(&self) -> Result<XenHvmContext, XenError> {
+        // With a null buffer, `xc_domain_hvm_getcontext` returns the size that
+        // the context needs.
+        let size = unsafe {
+            xc_domain_hvm_getcontext(
+                self.interface.handle.0,
+                self.domain_id.0,
+                std::ptr::null_mut(),
+                0,
+            )
+        };
+        xc_check_error!(self.interface.handle.0, size);
+
+        let mut buffer = vec![0u8; size as usize];
+        let length = unsafe {
+            xc_domain_hvm_getcontext(
+                self.interface.handle.0,
+                self.domain_id.0,
+                buffer.as_mut_ptr(),
+                buffer.len() as u32,
+            )
+        };
+        xc_check_error!(self.interface.handle.0, length);
+
+        buffer.truncate(length as usize);
+        Ok(XenHvmContext::new(buffer))
+    }
+
+    /// Loads a changed context into the domain.
+    ///
+    /// Xen replaces the state of the domain's virtual hardware with the records
+    /// in `context`, for every vCPU and device at once.
+    ///
+    /// # Notes
+    ///
+    /// A vCPU can be in the middle of a device access that the device model,
+    /// usually QEMU, emulates. Loading the vCPU's registers throws that access
+    /// away, and the guest never gets its answer. A lost disk access can hang
+    /// the guest's disk until the guest resets the disk controller. To avoid
+    /// it, load only while [`XenIoreqPage::pending`] returns `false`.
+    ///
+    /// [`XenIoreqPage::pending`]: crate::devicemodel::XenIoreqPage::pending
+    pub fn set_context(&self, context: &XenHvmContext) -> Result<(), XenError> {
+        let bytes = context.as_bytes();
+
+        // `xc_domain_hvm_setcontext` takes a mutable pointer, but it only
+        // copies the bytes into a buffer for the hypercall. The cast from the
+        // shared slice is therefore safe.
+        let rc = unsafe {
+            xc_domain_hvm_setcontext(
+                self.interface.handle.0,
+                self.domain_id.0,
+                bytes.as_ptr() as *mut u8,
+                bytes.len() as u32,
+            )
+        };
+        xc_check_error!(self.interface.handle.0, rc);
         Ok(())
     }
 }

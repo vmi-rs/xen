@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `XenDomain::get_context` returns a domain's whole HVM context as a
+  `XenHvmContext`, and `XenDomain::set_context` loads it back.
+  `XenHvmContext::get` returns a copy of one record, and
+  `XenHvmContext::update` changes records in place. A record's struct, such
+  as `hvm_hw_cpu`, implements the sealed trait `XenHvmSaveRecord`.
 - `XenForeignMemory::map_resource` maps pages that Xen owns for a domain into
   the calling process, such as the pages that Xen shares with an ioreq
   server. Xen calls such a group of pages a resource. The mapping is a
