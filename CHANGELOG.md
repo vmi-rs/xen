@@ -35,6 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XenStore::domain_id_from_name` skips a domain that disappears while the
   lookup runs. Before, if another program destroyed a domain at that moment,
   the whole lookup failed with "Failed to read xen store".
+- `XenDomain::get_context_cpu`, `get_context_lapic` and
+  `get_context_lapic_regs` give Xen a mutable record to fill. Before, Xen
+  wrote into an immutable binding, which is undefined behavior.
 
 ## [0.8.0] - 2026-10-15
 

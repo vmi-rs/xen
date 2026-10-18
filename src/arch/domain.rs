@@ -1,65 +1,25 @@
 use xen_sys::{
-    __HVM_SAVE_TYPE_CPU, __HVM_SAVE_TYPE_LAPIC, __HVM_SAVE_TYPE_LAPIC_REGS, hvm_hw_cpu,
-    hvm_hw_lapic, hvm_hw_lapic_regs, hvm_save_descriptor, xc_domain_hvm_getcontext,
-    xc_domain_hvm_getcontext_partial, xc_domain_hvm_setcontext,
+    __HVM_SAVE_TYPE_CPU, hvm_hw_cpu, hvm_hw_lapic, hvm_hw_lapic_regs, hvm_save_descriptor,
+    xc_domain_hvm_getcontext, xc_domain_hvm_getcontext_partial, xc_domain_hvm_setcontext,
 };
 
 use super::{
-    XenHvmContext,
+    XenHvmContext, XenHvmSaveRecord,
     x86::{Amd64, LocalApic, LocalApicRegisters, Registers},
 };
 use crate::{VcpuId, XenDomain, XenError, xc_check_error};
 
 impl XenDomain<Amd64> {
     pub fn get_context_cpu(&self, vcpu: VcpuId) -> Result<Registers, XenError> {
-        let result = unsafe { std::mem::zeroed::<hvm_hw_cpu>() };
-
-        let rc = unsafe {
-            xc_domain_hvm_getcontext_partial(
-                self.interface.handle.0,
-                self.domain_id.0,
-                size_of_val(&__HVM_SAVE_TYPE_CPU::default().c) as u16,
-                vcpu.0,
-                &result as *const _ as *mut _,
-                size_of_val(&result) as u32,
-            )
-        };
-        xc_check_error!(self.interface.handle.0, rc);
-        Ok(result.into())
+        Ok(self.get_context_partial::<hvm_hw_cpu>(vcpu)?.into())
     }
 
     pub fn get_context_lapic(&self, vcpu: VcpuId) -> Result<LocalApic, XenError> {
-        let result = unsafe { std::mem::zeroed::<hvm_hw_lapic>() };
-
-        let rc = unsafe {
-            xc_domain_hvm_getcontext_partial(
-                self.interface.handle.0,
-                self.domain_id.0,
-                size_of_val(&__HVM_SAVE_TYPE_LAPIC::default().c) as u16,
-                vcpu.0,
-                &result as *const _ as *mut _,
-                size_of_val(&result) as u32,
-            )
-        };
-        xc_check_error!(self.interface.handle.0, rc);
-        Ok(result.into())
+        Ok(self.get_context_partial::<hvm_hw_lapic>(vcpu)?.into())
     }
 
     pub fn get_context_lapic_regs(&self, vcpu: VcpuId) -> Result<LocalApicRegisters, XenError> {
-        let result = unsafe { std::mem::zeroed::<hvm_hw_lapic_regs>() };
-
-        let rc = unsafe {
-            xc_domain_hvm_getcontext_partial(
-                self.interface.handle.0,
-                self.domain_id.0,
-                size_of_val(&__HVM_SAVE_TYPE_LAPIC_REGS::default().c) as u16,
-                vcpu.0,
-                &result as *const _ as *mut _,
-                size_of_val(&result) as u32,
-            )
-        };
-        xc_check_error!(self.interface.handle.0, rc);
-        Ok(result.into())
+        Ok(self.get_context_partial::<hvm_hw_lapic_regs>(vcpu)?.into())
     }
 
     pub fn set_context_cpu(&self, vcpu: VcpuId, registers: Registers) -> Result<(), XenError> {
@@ -206,5 +166,34 @@ impl XenDomain<Amd64> {
         };
         xc_check_error!(self.interface.handle.0, rc);
         Ok(())
+    }
+
+    /// Returns one record of a vCPU.
+    ///
+    /// Xen copies only that record, which is cheaper than reading the whole
+    /// context with `get_context`. `T` picks the record, such as `hvm_hw_cpu`
+    /// for the registers.
+    fn get_context_partial<T>(&self, vcpu: VcpuId) -> Result<T, XenError>
+    where
+        T: XenHvmSaveRecord + Default,
+    {
+        let mut record = T::default();
+
+        // SAFETY: The last argument tells Xen how big `record` is, and Xen
+        // fails instead of writing more. The sealed `XenHvmSaveRecord` limits
+        // `T` to Xen's record structs. These structs hold only integers.
+        // Whatever bytes Xen writes therefore leave a valid `T`.
+        let rc = unsafe {
+            xc_domain_hvm_getcontext_partial(
+                self.interface.handle.0,
+                self.domain_id.0,
+                T::typecode(),
+                vcpu.0,
+                &mut record as *mut T as *mut _,
+                size_of::<T>() as u32,
+            )
+        };
+        xc_check_error!(self.interface.handle.0, rc);
+        Ok(record)
     }
 }
