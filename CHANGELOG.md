@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `XenHvmContext::get` returns a copy of one record, and
   `XenHvmContext::update` changes records in place. A record's struct, such
   as `hvm_hw_cpu`, implements the sealed trait `XenHvmSaveRecord`.
+- `XenDomain::set_time_offset` sets the domain's time offset. The domain's RTC
+  and wall clock show the host's UTC plus this offset.
 - `XenForeignMemory::map_resource` maps pages that Xen owns for a domain into
   the calling process, such as the pages that Xen shares with an ioreq
   server. Xen calls such a group of pages a resource. The mapping is a

@@ -3,8 +3,9 @@ use xen_sys::{
     xc_domain_debug_control, xc_domain_decrease_reservation, xc_domain_decrease_reservation_exact,
     xc_domain_getinfolist, xc_domain_increase_reservation, xc_domain_increase_reservation_exact,
     xc_domain_maximum_gpfn, xc_domain_pause, xc_domain_populate_physmap,
-    xc_domain_populate_physmap_exact, xc_domain_set_access_required, xc_domain_setmaxmem,
-    xc_domain_unpause, xc_get_mem_access, xc_set_mem_access, xen_domctl_getdomaininfo,
+    xc_domain_populate_physmap_exact, xc_domain_set_access_required, xc_domain_set_time_offset,
+    xc_domain_setmaxmem, xc_domain_unpause, xc_get_mem_access, xc_set_mem_access,
+    xen_domctl_getdomaininfo,
 };
 
 pub use self::info::XenDomainInfo;
@@ -68,6 +69,21 @@ where
 
     pub fn unpause(&self) -> Result<(), XenError> {
         let rc = unsafe { xc_domain_unpause(self.interface.handle.0, self.domain_id.0) };
+        xc_check_error!(self.interface.handle.0, rc);
+        Ok(())
+    }
+
+    /// Sets the domain's time offset.
+    ///
+    /// Xen shows the guest a real-time clock (RTC) that runs at the host's UTC
+    /// plus this offset, in seconds. A guest such as Windows, which keeps local
+    /// time in its RTC, needs the offset of its time zone. The change takes
+    /// effect at once, in the RTC and in the wall clock of the domain's shared
+    /// info page.
+    pub fn set_time_offset(&self, seconds: i32) -> Result<(), XenError> {
+        let rc = unsafe {
+            xc_domain_set_time_offset(self.interface.handle.0, self.domain_id.0, seconds)
+        };
         xc_check_error!(self.interface.handle.0, rc);
         Ok(())
     }
