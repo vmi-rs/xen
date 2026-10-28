@@ -129,8 +129,20 @@ impl Drop for XenAltP2MView {
             "destroying altp2m view"
         );
 
-        unsafe {
-            xc_altp2m_destroy_view(self.interface.handle.0, self.domain_id.0, self.view_id);
+        let rc = unsafe {
+            xc_altp2m_destroy_view(self.interface.handle.0, self.domain_id.0, self.view_id)
+        };
+
+        // Xen refuses with EBUSY while a vCPU still uses the view, and the
+        // view then stays in place. Drop cannot return the error, so log it.
+        if rc < 0 {
+            let err = std::io::Error::last_os_error();
+            tracing::error!(
+                %err,
+                domain_id = self.domain_id.0,
+                view_id = self.view_id,
+                "failed to destroy altp2m view"
+            );
         }
     }
 }
